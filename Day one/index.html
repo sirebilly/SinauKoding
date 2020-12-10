@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Day 1</title>
+    </head>
+    <link href="style.css" rel="stylesheet">
+    <body>
+        
+        <table>
+            <tr>
+                <td>Name: </td><td><input type="text" name="name" id="name"></td>
+            </tr><tr>
+                <td>e-mail: </td><td><input type="text" name="email" id="email"></td>
+            </tr><tr>
+                <td>Affiliation</td><td><input type="text" name="affiliation" id="affiliation"></td>
+            </tr><tr>
+                <td><input type="button" name="go" value="Go" id="go" onclick="MyFunction()"></td>
+            </tr>
+        </table>
+        
+
+        <script>
+            var name, email, affiliation;
+            var button = document.getElementById("go");
+            function MyFunction() {
+                name = document.getElementById("name").value;
+                email = document.getElementById("email").value;
+                affiliation = document.getElementById("affiliation").value;
+                var isOK = true;
+                if(name.length <= 0){
+                    alert("Name cannot be empty!");
+                    isOK = false
+                }
+                if(email.indexOf("@") == -1){
+                    alert("Email not valid!");
+                    isOK = false
+                }
+                if(affiliation.length<=3){
+                    alert("Affiliation cannot be empty!")
+                    isOK = false
+                }
+                if(isOK){
+                    console.log(name);
+                    console.log(email);
+                    console.log(affiliation);
+                }
+            }
+        </script>
+    </body>
+</html>

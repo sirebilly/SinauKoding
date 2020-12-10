@@ -1,0 +1,23 @@
+body {
+    background-color: #202020;
+    color: #a2a2a2;
+    padding: 30px;
+}
+
+input[type=text] {
+    color: #3c3c3c;
+    border-radius: 5px;
+    border: none;
+    padding-left: 15px;
+    margin : 12px;
+    font-size: 20px;
+}
+
+input[type=button] {
+    color: #ffffff;
+    background-color: #ff5733;
+    border: none;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
