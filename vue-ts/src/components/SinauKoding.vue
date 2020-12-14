@@ -33,35 +33,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue} from 'vue-property-decorator'
+import Mahasiswa from '../entity/Mahasiswa'
+import Admin from '../entity/Admin'
+import {Role} from '../entity/Role'
 
-interface User {
-    id:number;
-    name:string;
-}
-
-enum Role {
-    ADMIN = 'ADMIN', 
-    MAHASISWA = 'MAHASISWA',
-    DOSEN = 'DOSEN',
-}
-
-abstract class BaseUser implements User {
-    public id : number = 0;
-    public name : string = '';
-    protected abstract role : Role;
-}
-
-class Mahasiswa extends BaseUser{
-    public nim : number = 1 ;
-    protected role : Role = Role.MAHASISWA;
-    
-}
-
-class Admin extends BaseUser{
-    public nip : number = 1;
-    protected role : Role = Role.ADMIN;
-}
-
+var userlist:any = [];
 export default{
     name: 'SinauKoding',
     methods:{
@@ -71,6 +47,11 @@ export default{
             let ni = document.getElementById('user_ni') as HTMLInputElement;
             let role = document.getElementById('type') as HTMLSelectElement;
             let user
+            if (isNaN(parseInt(ni.value)) || isNaN(parseInt(id.value))){
+                alert("ID and NIM/NIP must be a number");
+                return;
+            }
+
             if (role.value == 'ADMIN' ){
                 user = new Admin();
                 user.id= parseInt(id.value);
@@ -86,11 +67,18 @@ export default{
                 alert("Role not valid!");
                 return;
             }
-
-            console.log(user)
+            userlist.push(user);
+            localStorage.setItem('user', JSON.stringify(userlist));
+            console.log(userlist);
         }
     }, 
-    props:['msg'],    
+    mounted(){
+        if(localStorage.user) {
+            userlist = JSON.parse(localStorage.getItem('user')!)
+        }
+        console.log(userlist);
+    },
+    props:['msg']
 }
 
 </script>

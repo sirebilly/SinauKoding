@@ -6,5 +6,8 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
-  render: h => h(App)
+  render: h => h(App), 
+  data:{
+    logged_in: 'false',
+  },
 }).$mount('#app')
