@@ -36,7 +36,12 @@ export default{
         test: function (){
             let logged_in:boolean = true;
             localStorage.logged_in =  logged_in;
-            window.location.href = '/';
+            this.$notify({
+                group:'foo',
+                title:'Logged in!',
+                text:'You are logged in!'
+            })
+            // window.location.href = '/';
         }
     },
 }

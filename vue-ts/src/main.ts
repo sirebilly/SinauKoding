@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import Notification from 'vue-notification'
 
 Vue.config.productionTip = false
 
@@ -11,3 +12,5 @@ new Vue({
     logged_in: 'false',
   },
 }).$mount('#app')
+
+Vue.use(Notification);
