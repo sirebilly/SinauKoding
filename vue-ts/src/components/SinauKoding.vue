@@ -69,7 +69,11 @@ export default{
             }
             userlist.push(user);
             localStorage.setItem('user', JSON.stringify(userlist));
-            console.log(userlist);
+            this.$notify({
+                group:'foo',
+                title:'Success!',
+                text:'User added.'
+            });
         }
     }, 
     mounted(){

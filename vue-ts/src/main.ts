@@ -4,7 +4,7 @@ import router from './router'
 import Notification from 'vue-notification'
 
 Vue.config.productionTip = false
-
+Vue.use(Notification);
 new Vue({
   router,
   render: h => h(App), 
@@ -13,4 +13,3 @@ new Vue({
   },
 }).$mount('#app')
 
-Vue.use(Notification);
