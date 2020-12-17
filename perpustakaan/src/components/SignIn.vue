@@ -22,7 +22,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component
 export default class SignIn extends Vue {
     public auth(){
-
+        
     }
 }
 
@@ -39,6 +39,7 @@ h5#cardHeader {
 
 .signin{
     margin:auto;
+    padding-top: 150px;
 }
 
 .card-content{

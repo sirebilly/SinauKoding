@@ -37,6 +37,7 @@ h5#cardHeader {
 
 .register{
     margin:auto;
+    padding-top: 150px;
 }
 
 .card-content{

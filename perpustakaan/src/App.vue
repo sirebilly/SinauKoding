@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <notifications group="StatusCodes" position="bottom center"/>
     <router-view/>
   </div>
 </template>
