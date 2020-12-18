@@ -7,13 +7,10 @@ export default class Session {
     public static set(user :User){
         window.sessionStorage.setItem(Session.KEY, JSON.stringify(user));
     }
-
     public static get(key?: keyof User){
         const session:string | null = window.sessionStorage.getItem(Session.KEY);
-
         if(session){
             const user:User = User.instanceFrom(JSON.parse(session));
-            
             if(user){
                 if(key){
                     return user.hasOwnProperty(key) ? user[key] : null;

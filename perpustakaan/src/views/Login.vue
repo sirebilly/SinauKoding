@@ -29,9 +29,14 @@ export default class LoginView extends Vue {
     public user:User = new User();
     public SwitchRegis():void{
         this.status = 'register';
+        this.doReset();
     }
     public SwitchLogin():void{
         this.status = 'login';
+        this.doReset();
+    }
+    public doReset():void{
+        this.user = new User();
     }
 
     public doSubmit(){
@@ -46,7 +51,7 @@ export default class LoginView extends Vue {
             axios.post(url, this.user.serialize(), {responseType: 'json'}).then((response: AxiosResponse)=> {
                 let st_code:StatusCode = get(response, "data.status")
                 if(st_code === StatusCode.SAVE_SUCCESS){
-                    this.$router.push('/');
+                    this.status='login'   
                 }
                 if(st_code === StatusCode.LOGIN_SUCCESS){
                     //Set session User
