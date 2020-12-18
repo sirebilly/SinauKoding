@@ -1,13 +1,9 @@
 import {deserialize, inheritSerialization, serialize} from "cerialize"
 
 import baseEntity from '@/entity/BaseEntity'
+import {Role} from '@/common/Role'
 
-enum Role{
-    USER = "USER",
-    ADMIN = "ADMIN",
-}
-
-@inheritSerialization
+@inheritSerialization(baseEntity)
 export default class User extends baseEntity {
     @serialize
     @deserialize
@@ -27,10 +23,13 @@ export default class User extends baseEntity {
     
     @serialize
     @deserialize
-    public role:Role = Role.USER
+    public role:Role = Role.USER;
     
     @serialize
     @deserialize
     public token:string = "";
 
+    public get isAdmin(){
+        return this.role === Role.ADMIN;
+    }
 }

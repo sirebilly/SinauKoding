@@ -13,7 +13,7 @@ export default abstract class baseEntity {
         return Deserialize(param, this);
     }
     public static OnSerialized(instance: baseEntity, json:any){
-
+        console.log('onSerialized', instance, json)
     }
     public static OnDeserialized(instance: baseEntity, json:any){
         

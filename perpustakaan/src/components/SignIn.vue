@@ -18,11 +18,23 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import User from '@/entity/User'
 
 @Component
 export default class SignIn extends Vue {
+    @Prop() public user!:User;
     public auth(){
-        
+        console.log(this.user);
+        let uname = document.getElementById('username') as HTMLInputElement;
+        let passwd = document.getElementById('password') as HTMLInputElement;
+
+        this.user.username = uname.value;
+        this.user.password = passwd.value;
+        console.log(this.user);
+        this.$emit('auth');
+    }
+    public mounted(){
+        // console.log(this.user)
     }
 }
 

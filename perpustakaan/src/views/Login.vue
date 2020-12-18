@@ -1,9 +1,9 @@
 <template>
     <div v-if="status=='login'" class="login">
-        <SignIn @go-regis="SwitchRegis"/>
+        <SignIn @go-regis="SwitchRegis" @auth="doSubmit" :user="this.user"/>
     </div>
     <div v-else-if="status=='register'" class="register">   
-        <Regis @go-login="SwitchLogin"/>
+        <Regis @go-login="SwitchLogin" @regist="doSubmit" :user="this.user"/>
     </div>
 </template>
 
@@ -26,12 +26,12 @@ import axios, { AxiosResponse, AxiosError } from 'axios'
 
 export default class LoginView extends Vue {
     protected status:'login'|'register' ='login';
-    protected user: User = new User();
+    public user:User = new User();
     public SwitchRegis():void{
-        this.status = 'register'
+        this.status = 'register';
     }
     public SwitchLogin():void{
-        this.status = 'login'
+        this.status = 'login';
     }
 
     public doSubmit(){
@@ -41,7 +41,8 @@ export default class LoginView extends Vue {
         }
         if (valid){
             const baseURL:string = "http://202.152.159.164:8088/perpus/";
-            const url:string = "${baseURL}auth/${(this.status=='register') ? 'do-register' : 'do-login'}";
+            const url:string = `${baseURL}auth/${(this.status=='register') ? 'do-register' : 'do-login'}`;
+
             axios.post(url, this.user.serialize(), {responseType: 'json'}).then((response: AxiosResponse)=> {
                 let st_code:StatusCode = get(response, "data.status")
                 if(st_code === StatusCode.SAVE_SUCCESS){
@@ -52,6 +53,10 @@ export default class LoginView extends Vue {
                     this.$router.push('/home');
                 }
                 //notify
+                this.$notify({
+                    group: 'StatusCodes', 
+                    text: `${st_code}`
+                })
             })
             .catch((error: AxiosError) => {
                 console.error(error);
@@ -60,7 +65,11 @@ export default class LoginView extends Vue {
             .finally(()=>{
                 //do something
             });
-        }    
+        }
+            
+    }
+    protected mounted(){
+        console.log(this.user);
     }
 }
 </script>

@@ -10,7 +10,7 @@
                 <input type="text" name="username" id="username" placeholder="Username"><br>
                 <input type="text" name="address" id="address" placeholder="Address"><br>
                 <input type="password" name="password" id="password" placeholder="Password"><br>
-                <button class="btn btn-outline-primary" id="btn-login" @click="auth()">Register</button>
+                <button class="btn btn-outline-primary" id="btn-login" @click="Regist()">Register</button>
             </div>
         </div>
     </div>
@@ -18,10 +18,26 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import User from '@/entity/User'
 
 @Component
 export default class Regis extends Vue {
-    @Prop() private status!: string;
+    @Prop() public user!:User;  
+    public Regist(){
+        console.log(this.user);
+        let uname = document.getElementById('username') as HTMLInputElement;
+        let passwd = document.getElementById('password') as HTMLInputElement;
+        let addr = document.getElementById('address') as HTMLInputElement
+        let name = document.getElementById('name') as HTMLInputElement
+
+        this.user.username = uname.value;
+        this.user.password = passwd.value;
+        this.user.profileName = name.value;
+        this.user.address = addr.value;
+
+        console.log(this.user);
+        this.$emit('regist');
+    }
 }
 
 </script>
