@@ -22,6 +22,10 @@ export default abstract class baseEntity {
         baseEntity.OnNormalize(instance)
     }
 
+    public clone(){
+        return lodash.cloneDeep(this);
+    }
+
     public static OnNormalize(param:Object){
         const invalid: Function = (p: any) => {
             if(lodash.isString(p)|| lodash.isObject(p) && !lodash.isDate(p)){
