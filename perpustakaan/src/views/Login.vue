@@ -14,6 +14,7 @@ import SignIn from '@/components/SignIn.vue'
 import Regis from '@/components/Register.vue'
 import User from '@/entity/User'
 import StatusCode from '@/common/StatusCodes'
+import Session from '@/common/Session'
 import axios, { AxiosResponse, AxiosError } from 'axios'
 
 
@@ -40,6 +41,7 @@ export default class LoginView extends Vue {
     }
 
     public doSubmit(){
+        console.log(this.user)
         let valid:boolean = this.user.username != "" && this.user.password != "";
         if (this.status == 'register'){
             valid = valid && this.user.profileName != "";
@@ -49,15 +51,19 @@ export default class LoginView extends Vue {
             const url:string = `${baseURL}auth/${(this.status=='register') ? 'do-register' : 'do-login'}`;
 
             axios.post(url, this.user.serialize(), {responseType: 'json'}).then((response: AxiosResponse)=> {
-                let st_code:StatusCode = get(response, "data.status")
+                console.log(response);
+                let st_code:StatusCode = get(response, "data.status");
                 if(st_code === StatusCode.SAVE_SUCCESS){
                     this.status='login'   
                 }
                 if(st_code === StatusCode.LOGIN_SUCCESS){
                     //Set session User
+                    Session.set(response.data.data);
                     this.$router.push('/home');
                 }
                 //notify
+
+                // console.log(response.data.data)
                 this.$notify({
                     group: 'StatusCodes', 
                     text: `${st_code}`
@@ -74,7 +80,8 @@ export default class LoginView extends Vue {
             
     }
     protected mounted(){
-        console.log(this.user);
+        // console.log(this.user);
+        this.doReset();
     }
 }
 </script>

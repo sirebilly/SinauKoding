@@ -1,67 +1,141 @@
 <template>
-    <div class="paginate">
-        <ul>
-            <li><button type="button" @click="OnClickFistPage" :disabled="IsInFirstPage">First</button></li>
-            <li><button type="button" @click="OnClickPreviousPage" :disabled="IsInFirstPage">Previous</button></li>
-            <!-- Range of buttons -->
-            <li v-for="page in pages" :key="page.name"><button type="button" @click="OnClickPage" :disabled="page.isDisabled">{{ page.name }}</button></li>
-            <!-- end of buttons -->
-            <li><button type="button" @click="OnClickNextPage" :disabled="IsInLastPage">Next</button></li>
-            <li><button type="button" @click="OnClickLastPage" :disabled="IsInLastPage">Last</button></li>
-        </ul>
+    <div class="pagination-item">
+        <component :is="rootTag" :class="rootClass">
+            <slot></slot>
+            <component v-if="!isBeingRequest && tdatas.length > 0" :is="renderContainerTag" :class="renderContainerTag">
+                <template v-for="(data, index) in tdatas">
+                    <slot name="onRenderedData" :data="data" :index="index" :currentPage="currentPage"/>
+                </template> 
+            </component>
+            <slot v-else-if="$slots['onRequestOrEmptyData']" name="onRequestOrEmptyData"/>
+        </component>
+        <nav aria-label="..." v-if="totalPage>1" class="float-right">
+            <ul class="pagination pagination-sm">
+                <li v-if="showPrevious" class="page-item">
+                    <a class="page-link" href="#" @click="(e) => onPagination(e, 'previous')">
+                        <span aria-hidden="true"></span>
+                    </a>
+                </li>
+                <li v-for="(pagination, index) in paginations" :key="`pagination-${index}`"
+                    :class="`${pagination.className} ${pagination.value === '...' ? 'disabled' : ''}`"
+                    :style="`cursor: ${pagination.value === '...' ? 'not-allowed' : 'pointer'}`">
+                    <a href='#' class='page-link' @click="(e) => onPagination(e,pagination)">
+                        {{pagination.value}}
+                    </a>
+                </li>
+                <li v-if="showNext" class="page-item">
+                    <a class="page-link" href="#" @click="(e) => onPagination(e,'next')">
+                        <span aria-hidden="true">#</span>
+                    </a>
+                </li>
+            </ul></nav> 
     </div>
 </template>
 
 <script lang="ts">
-import { extend } from 'lodash';
-import {Component, Prop, Vue} from 'vue-property-decorator'
+import {Prop, Component, Vue, Watch} from 'vue-property-decorator';
 
+@Component
 export default class Pagination extends Vue{
-    @Prop() public MaxButtons:number = 3;
-    @Prop() public totalPages:number = 1;
-    @Prop() public total:number = 1;
-    @Prop() public currPage:number = 1;
+    @Prop({default: "div"})
+    public rootTag!: string;
 
-    get startPage(){
-        if(this.currPage === 1){
-            return 1;
-        }
-        if(this.currPage === this.totalPages){
-            return this.totalPages - this.MaxButtons;
-        }
-        return this.currPage - 1
-    }
-    get pages(){
-        const range = [];
-        for(let i = this.startPage; i <= Math.min(this.startPage + this.MaxButtons - 1, this.totalPages); i+=1){
-            range.push({
-                name: i, 
-                isDisabled: i === this.currPage
-            });
-        }
-        return range;
-    }
-    get IsInFirstPage(){
-        return this.currPage === 1;
-    }
-    get IsInLastPage(){
-        return this.currPage === this.totalPages;
+    @Prop({default: ""})
+    public rootClas!:string;
+
+    @Prop({default: "div"})
+    public renderContainerTag!:string;
+
+    @Prop({default: ""})
+    public renderContainerClass!:string;
+
+    @Prop({default: 0})
+    public offset!:number;
+    
+    @Prop({default: 5})
+    public limit!:number;
+
+    @Prop({default: false})
+    public isBeingRequest!:boolean;
+
+    @Prop({default: []})
+    public datas!:Array<any>;
+
+    @Prop({default: 0})
+    public rows!: number;
+
+    @Prop({default: 5})
+    public MaxLengthPagination!:number;
+
+    @Watch("offset")
+    public onOffsetChange(value:number = 0){
+        this.currentPage = value === 0 ? 1 : this.currentPage;
     }
 
-    public OnClickFirstPage(){
-        this.$emit('pageChanged', 1);
+    public totalPage: number =0;
+    public currentPage: number = 1;
+
+    public get tdatas(){
+        this.totalPage = Math.ceil(parseInt((this.rows || this.datas.length) as any)/parseInt(this.limit as any));
+        return this.datas;
     }
-    public OnClickPreviousPage(){
-        this.$emit('pageChanged', this.currPage - 1);
+    public get paginations(){
+        const page: number = parseInt(this.currentPage as any );
+        const totalPage: number = parseInt(this.totalPage as any );
+        
+        const sideWidth: number = this.MaxLengthPagination < 9 ? 1:2;
+        const leftWidth: number = (this.MaxLengthPagination - sideWidth * 2 - 3) >> 1;
+        const rightWidth: number = (this.MaxLengthPagination - sideWidth * 2 - 2) >> 1;
+
+        const defaultRange: any = {value: "...", className: 'page-item'};
+        const range:Function = (start:any, end:any)=> Array.from(Array(end - start + 1), (_, i)=>{
+            return{
+                value: i+start, 
+                className: parseInt(page as any) === parseInt((i+start) as any ) ? "page-item active" : "page-item"
+            };
+        });
+
+        if(totalPage <= this.MaxLengthPagination){
+            return range(1, totalPage);
+        }
+
+        if(page <= this.MaxLengthPagination - sideWidth - 1 - rightWidth){
+            return range(1, this.MaxLengthPagination + 1 -1).concat(defaultRange).concat(range(totalPage - sideWidth +1, totalPage));
+        }
+
+        if(page>= totalPage - sideWidth - 1 -rightWidth){
+            return range(1, sideWidth).concat(defaultRange).concat(range(totalPage - sideWidth - 1 - rightWidth - leftWidth, totalPage));
+        }
+
+        return range(1, sideWidth).concat(defaultRange).concat(range(page - leftWidth, page + rightWidth)).concat(defaultRange).concat(range(totalPage - sideWidth + 1, totalPage));
     }
-    public OnClickPage(page: number){
-        this.$emit('pageChanged', page)
+    public get showPrevious(){
+        return parseInt(this.currentPage as any) > 1 && this.paginations.length > 0;
     }
-    public OnClickNextPage(){
-        this.$emit('pageChanged', this.currPage + 1);
+    public get showNext(){
+        return parseInt(this.currentPage as any) < parseInt(this.totalPage as any) && this.paginations.length > 0;
     }
-    public OnClickLastPage(){
-        this.$emit('pageChanged', this.totalPages);
+
+    public onPagination(e:any, pagination:any){
+        e.preventDefault();
+
+        if(pagination === 'previous' || pagination === "next"){
+            pagination = this.paginations.find((value:any)=>{
+                return parseInt(value.value as any) === ((pagination==="previous")? (parseInt(this.currentPage as any)-1) : (parseInt(this.currentPage as any)+1));
+            })
+        }
+
+        if (!pagination || pagination.value === "..."){
+            return;
+        }
+
+        if(parseInt(this.currentPage as any) !== parseInt(pagination.value as any)){
+            const oldCurrentPage : number = parseInt(this.currentPage as any);
+            this.currentPage = parseInt(pagination.value as any);
+            this.$emit("onPagination", (parseInt(pagination.value as any ) -1)*(parseInt(this.limit as any)), ()=>{
+                this.currentPage = oldCurrentPage
+            })
+        }
     }
 }
 </script>

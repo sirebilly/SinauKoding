@@ -16,14 +16,10 @@ export default abstract class baseEntity {
         return Deserialize(param, this);
     }
     public static OnSerialized(instance: baseEntity, json:any){
-        console.log('onSerialized', instance, json);
-        json = this.OnNormalize(instance);
-        console.log('JSON',json);
+        baseEntity.OnNormalize(json)
     }
     public static OnDeserialized(instance: baseEntity, json:any){
-        instance = this.OnNormalize(json);
-
-        console.log('onDeserialized', instance, json);
+        baseEntity.OnNormalize(instance)
     }
 
     public static OnNormalize(param:Object){

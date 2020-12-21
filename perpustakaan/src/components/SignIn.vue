@@ -24,7 +24,7 @@ import User from '@/entity/User'
 export default class SignIn extends Vue {
     @Prop() public user!:User;
     public auth(){
-        console.log(this.user);
+        // console.log(this.user);
         let uname = document.getElementById('username') as HTMLInputElement;
         let passwd = document.getElementById('password') as HTMLInputElement;
 
