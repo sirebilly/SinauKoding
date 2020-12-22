@@ -20,12 +20,13 @@
                 <tr slot="onRenderedData" slot-scope="{data, index}">
                     <slot name="renderedTd" :record="record" :data="data" :index="index"/>
                     <td v-if="hasAction" class="d-md-flex justify-content-center align-items-center align-middle">
-                        <template v-if="record" && record.id === data.id>
+                        <template v-if="record && record.id === data.id">
                             <button type="button" class="btn btn-sm btn-primary m-2 mt-md-0 mb-md-0" @click="()=> doSave(index)">Save</button>
                             <button type="button" class="btn btn-sm btn-warning m-2 mt-md-0 mb-md-0" @click="onCancelAddOrEdit">Cancel</button>
                         </template>
                         <button type="button" v-if="canEdit" class="btn btn-sm btn-primary m-2 mt-md-0 mb-md-0" @click="onAddOrEdit">Edit </button>
                         <button type="button" v-if="canEdit" class="btn btn-sm btn-danger m-2 mt-md-0 mb-md-0" @click="onDelete">Delete</button>
+                    </td>
                 </tr>
                 <tr slot="onRequestOrEmptyData" class="text-center">
                     <span v-if="isBeingRequest" class="spinnes-border text-dark" role="status">
@@ -55,19 +56,19 @@ import { Deserialize } from 'cerialize';
     }
 })
 export default class customTable<E extends baseEntity> extends Vue{
-    @Prop()
+    @Prop({default: ""})
     public baseApi!: string;
-
+    @Prop({default: baseEntity})
     public entity!: new() =>E;
-
+    @Prop({default: () => true})
     public validate!:(record: E) => boolean;
-
+    @Prop({default: 1})
     public totalColumn!:number;
-
+    @Prop({default: true})
     public canAdd!:boolean;
-
+    @Prop({default: true})
     public canEdit!:boolean;
-
+    @Prop({default: true})
     public canDelete!:boolean;
 
     public isBeingRequest:boolean = false;
@@ -147,7 +148,7 @@ export default class customTable<E extends baseEntity> extends Vue{
                 url: this.baseApi, 
                 responseType: "json", 
                 data: this.record.serialize(), 
-                method: this.record.id ? "put" | "post", 
+                method: this.record.id ? "put" : "post", 
                 headers: {"Authorization": Session.get("token")}
             }).then((response: AxiosResponse) => {
                 const status: string = get(response, "data.status");
@@ -176,7 +177,7 @@ export default class customTable<E extends baseEntity> extends Vue{
         if(record.id && confirm("Are you sure you want to delete this?")){
             this.isBeingRequest = true;
 
-            Axios.delete(`${this.baseApi}${record.id}`. {
+            Axios.delete(`${this.baseApi}${record.id}`,{
                 responseType:"json", 
                 headers: {"Authorization": Session.get("token")}
             }).then((response: AxiosResponse) => {

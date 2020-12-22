@@ -41,7 +41,7 @@ export default class Pagination extends Vue{
     public rootTag!: string;
 
     @Prop({default: ""})
-    public rootClas!:string;
+    public rootClass!:string;
 
     @Prop({default: "div"})
     public renderContainerTag!:string;
