@@ -8,8 +8,8 @@ enum Status{
     RETURNED = "RETURNED",
 }
 
-@inheritSerialization
-export class Loan extends baseEntity{
+@inheritSerialization(baseEntity)
+export default class Loan extends baseEntity{
     @serialize
     @deserialize
     public book:Book = new Book();

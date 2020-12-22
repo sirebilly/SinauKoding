@@ -28,7 +28,8 @@
                         <span aria-hidden="true">#</span>
                     </a>
                 </li>
-            </ul></nav> 
+            </ul>
+        </nav> 
     </div>
 </template>
 
