@@ -71,6 +71,10 @@ export default class LoginView extends Vue {
             })
             .catch((error: AxiosError) => {
                 console.error(error);
+                this.$notify({
+                    group: 'StatusCodes', 
+                    text: "Username or password does not match"
+                })
 
             })
             .finally(()=>{

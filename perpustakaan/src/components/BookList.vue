@@ -4,9 +4,9 @@
                       :totalColumn="5"
                       :entity="entity"
                       :validate="doValidate"
-                      :canAdd="true"
-                      :canEdit="true"
-                      :canDelete="true">
+                      :canAdd="user.isAdmin"
+                      :canEdit="user.isAdmin"
+                      :canDelete="user.isAdmin">
             <h2 slot="title">Books</h2>
             <template slot="renderedTh">
                 <th>Name</th>
