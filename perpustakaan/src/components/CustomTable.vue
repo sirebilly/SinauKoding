@@ -128,19 +128,19 @@
         public onAddOrEdit(record: E = null){
             if (this.record !== null){
                 this.$notify({
-                    group: 'notif',
+                    group: 'StatusCodes',
                     title: 'Please finish previous step or cancel it'
                 });
             }else{
-                console.log("OnAddOrEdit")
+                // console.log("OnAddOrEdit")
                 if (record === null){
                     this.record = new this.entity();
                     this.records.unshift(new this.entity());
-                    console.log(this.record, this.records)
+                    // console.log(this.record, this.records)
                 }else{
                     this.record = record.clone();
                 }
-                console.log("test")
+                // console.log("test")
                 this.$emit('onAddOrEdit');
 
             }
@@ -154,7 +154,7 @@
 
                 //Notification.snackbar(`Cancel ${this.record.id ? "edit" : "add new"} data`);
                 this.$notify({
-                    group:'notif',
+                    group:'StatusCodes',
                     title:`Cancel ${this.record.id ? "edit" : "add new"} data`
                 });
 
@@ -173,16 +173,16 @@
                     headers: {"Authorization": Session.get("token")}
                 }).then((response: AxiosResponse) =>{
                     if(get(response,"data.status") === StatusCode.OPERATION_COMPLETE){
-                        console.log(response);
-                        this.records = Deserialize(get(response, "data.data", []));
-                        console.log(this.records);
+                        // console.log(response);
+                        this.records = Deserialize(get(response, "data.data", []), this.entity);
+                        // console.log(178, this.records);
                         this.rows = get(response, "data.rows", 0);
                         this.offset = offset;
                     }else{
                         //Notification.snackbar(StatusCode.DATA_NOT_FOUND);
                         this.$notify({
-                            group:'notif',
-                            title:StatusCode.DATA_NOT_FOUND
+                            group:'StatusCodes',
+                            title:"Data not found"
                         });
                     }
                 }).catch((error: AxiosError) => {
@@ -190,8 +190,8 @@
 
                     //Notification.snackbar(StatusCode.CONNECTION_FAILED);
                     this.$notify({
-                        group:'notif',
-                        title:StatusCode.CONNECTION_FAILED
+                        group:'StatusCodes',
+                        title: "Connection Failed"
                     });
 
                     
@@ -208,20 +208,17 @@
         public doSave(index: number){
             if (this.validate(this.record)){
                 this.isBeingRequest = true;
-
-                console.log(Serialize(this.record));
-
+                // console.log(this.record);
                 Axios.request({
                     url: this.baseApi,
                     responseType: 'json',
-                    data: Serialize(this.record),
-                    method: this.record.id? 'put' : 'post',
+                    data: this.record.serialize(),
+                    method: this.record.id ? 'put' : 'post',
                     headers: {'Authorization': Session.get("token")}
                 }).then((response: AxiosResponse) => {
                     const status: string = get(response, 'data.status');
-                    
                     if(status === StatusCode.SAVE_SUCCESS || status === StatusCode.UPDATE_SUCCESS || status === StatusCode.OPERATION_COMPLETE){
-                        this.$set(this.records, index, get(response, "data.data"));
+                        this.$set(this.records, index, Deserialize(get(response, "data.data"), this.entity));
 
                         this.$nextTick(() => this.record = null);
 
@@ -234,7 +231,7 @@
                     console.error(error);
 
                     this.$notify({
-                        group:'notif',
+                        group:'StatusCodes',
                         title:StatusCode.CONNECTION_FAILED
                     });
                 }).finally(()=>{

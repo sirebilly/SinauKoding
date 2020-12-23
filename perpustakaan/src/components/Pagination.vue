@@ -13,7 +13,7 @@
             <ul class="pagination pagination-sm">
                 <li v-if="showPrevious" class="page-item">
                     <a class="page-link" href="#" @click="(e) => onPagination(e, 'previous')">
-                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true">&lt;&lt;</span>
                     </a>
                 </li>
                 <li v-for="(pagination, index) in paginations" :key="`pagination-${index}`"
@@ -24,8 +24,8 @@
                     </a>
                 </li>
                 <li v-if="showNext" class="page-item">
-                    <a class="page-link" href="#" @click="(e) => onPagination(e,'next')">
-                        <span aria-hidden="true">#</span>
+                    <a class="page-link" @click="(e) => onPagination(e,'next')">
+                        <span aria-hidden="true">&gt;&gt;</span>
                     </a>
                 </li>
             </ul>

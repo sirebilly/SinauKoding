@@ -66,7 +66,7 @@ export default class LoginView extends Vue {
                 // console.log(response.data.data)
                 this.$notify({
                     group: 'StatusCodes', 
-                    text: `${st_code}`
+                    text: st_code === StatusCode.SAVE_SUCCESS ? "User Created" : "Logged in"
                 })
             })
             .catch((error: AxiosError) => {

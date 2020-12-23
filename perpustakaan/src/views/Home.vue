@@ -1,23 +1,23 @@
 <template>
-	<div class="home-page">
-		<ul class="navbar-nav float-right p-3 pr-5">
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle no-select" data-toggle="dropdown">
-			{{user.profileName}}
-			<span v-if="user.isAdmin" class="text-muted">
-				({{user.role.toString().split("_")[1]}})
-			</span>
-			</a>
-			<div class="dropdown-menu dropdown menu-right animated">
-			<a class="dropdown-item" @click="doLogout">
-				Logout
-			</a>
-			</div>
-		</li>
-		</ul>
-		<book-list/>
-		<loan-list/>
-	</div>
+  <div class="home-page">
+    <ul class="navbar-nav float-right p-3 pr-5">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle no-select" data-toggle="dropdown">
+          {{user.profileName}}
+          <span v-if="user.isAdmin" class="text-muted">
+            ({{user.role.toString().split("_")[1]}})
+          </span>
+        </a>
+        <div class="dropdown-menu dropdown menu-right animated">
+          <a class="dropdown-item" @click="doLogout">
+            Logout
+          </a>
+        </div>
+      </li>
+    </ul>
+    <book-list/>
+    <loan-list/>
+  </div>
 </template>
 
 <script lang="ts">

@@ -22,15 +22,15 @@
                     Date
                 </th>
             </template>
-            <template slot="renderedTd" slot-scope="{record, data, index}">
+            <template slot="renderedTd" slot-scope="{record, data}">
                 <td class="align-middle">
-                    <select v-if="record && record.book.id === data.id"
+                    <select v-if="record && record.id === data.id"
                             v-model="record.book.id"
                             class="form-control"
                             @click="(e) => onChangeBook(e.target.value, record)">
                         <option value="" disabled selected>Please select book</option>
                         <option v-for="(book, idx) in books" :key="`${idx}-${book.id}`" :value="book.id">{{book.title}}</option>
-                        <option v-if="books.length < rows" value="loadMore" class="text-info">LoadMore</option>
+                        <option v-if="books.length < rows" value="loadMore" class="text-info">Load More</option>
                     </select>
                     <span v-else>{{data.book.title}}</span>
                 </td>
@@ -84,17 +84,17 @@ export default class LoanList extends Vue {
 
     public onChangeBook(value: string, loan: Loan){
         if(value === "loadMore"){
-            console.log("load more");
+            // console.log("load more");
             this.doFind();
         }else{
-            console.log(typeof(value))
             const index: number = this.books.findIndex(book => book.id === parseInt(value));
+            // console.log(this.books[index]);
             loan.book = index > -1 ? this.books[index].clone() : new Book();
             this.$nextTick(() => {
                 if(!loan.book.id){
-                    console.log(loan.book.id)
+                    // console.log(loan.book.id)
                     this.$notify({
-                        group: 'notify',
+                        group: 'StatusCodes',
                         title: 'Invalid Book'
 
                     })
@@ -104,7 +104,7 @@ export default class LoanList extends Vue {
     }
     public onAddOrEdit(){
         this.books = [];
-        console.log("test2")
+        // console.log("test2")
         this.rows = 0;
 
         this.doFind();
@@ -112,20 +112,20 @@ export default class LoanList extends Vue {
     public doFind(){
         if(!this.isBeingRequest){
             this.isBeingRequest = true;
-            console.log("test3")
+            // console.log("test3")
             Axios.get(`${this.baseApi}books/`, {responseType: "json", 
             params:{offset: this.books.length, limit: 3}, 
             headers:{ "Authorization": Session.get("token")}
             }). then((response: AxiosResponse) =>{
-                console.log("test4")
+                // console.log("test4")
                 if(get(response, "data.status") === StatusCode.OPERATION_COMPLETE){
-                    console.log(get(response, "data.data"))
+                    // console.log(get(response, "data.data"))
                     this.books.push(...Book.instanceFrom(get(response, "data.data")));
                     this.rows = get(response, "data.rows", 0);
                 }else{
                     //notify status code 
                     this.$notify({
-                        group: 'notify',
+                        group: 'StatusCodes',
                         title: status
 
                     })
@@ -134,7 +134,7 @@ export default class LoanList extends Vue {
                 console.error(error); 
                 //notify conn. error
                 this.$notify({
-                        group: 'notify',
+                        group: 'StatusCodes',
                         title: 'Connection Error'
 
                     })
